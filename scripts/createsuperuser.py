@@ -8,10 +8,10 @@ def main():
     super_user = user.get_by_username(db_session, username=confing.SUPERUSER_NAME)
     if not super_user:
         user_in = UserCreate(
-            username=confing.SUPERUSER_NAME,
-            email=confing.SUPERUSER_EMAIL,
-            password=confing.SUPERUSER_PASSWORD,
-            first_name=confing.SUPERUSER_FIRST_NAME,
+            username=settings.SUPERUSER_NAME,
+            email=settings.SUPERUSER_EMAIL,
+            password=settings.SUPERUSER_PASSWORD,
+            first_name=settings.SUPERUSER_FIRST_NAME,
             is_superuser=True,
             is_active=True,
         )
