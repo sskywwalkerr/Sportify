@@ -6,7 +6,9 @@ from sqlalchemy.orm import Session
 from src.config import settings
 from src.app.base.utils.db import get_db
 
-from src.app.user import models, schemas, crud
+from src.app.user import models
+from src.app.user import schemas
+from src.app.user import crud
 
 from .schemas import Token, Msg, VerificationInDB
 from .logic import get_current_user
@@ -15,7 +17,7 @@ from .security import get_password_hash
 from .send_email import send_reset_password_email
 from .logic import (
     generate_password_reset_token,
-    virify_password_reset_token,
+    verify_password_reset_token,
     registration_user,
     verify_registration_user
 )
@@ -80,7 +82,7 @@ def recover_password(email: str, db: Session = Depends(get_db)):
     return {"msg": "Password recovery email sent"}
 
 @auth_router.post("/reset-password/", response_model=Msg)
-def reset_password(token: str = Body(...), new_password: str = Body(...), db: Session = Depends(get_db):
+def reset_password(token: str = Body(...), new_password: str = Body(...), db: Session = Depends(get_db)):
     """Reset password"""
     email = verify_password_reset_token(token)
     if not email:

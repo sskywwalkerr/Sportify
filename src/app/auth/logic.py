@@ -15,7 +15,7 @@ from src.app.user import schemas
 from src.app.user import crud
 
 from .jwt import ALGORITHM
-from .schemas import TokenPayload, VerificationDB
+from .schemas import TokenPayload, VerificationInDB
 from .service import auth_verify
 from .send_email import send_new_account_email
 
@@ -56,7 +56,7 @@ def registration_user(new_user: schemas.UserCreateInRegistration, db: Session):
         return True
     else:
         user = crud.user.create(db, obj_in=new_user)
-        verify = auth_verify.create(db, user_id)
+        verify = auth_verify.create(db, user.id)
         send_new_account_email(new_user.email, new_user.username, new_user.password, verify.link)
         return False
 
@@ -65,7 +65,7 @@ def verify_registration_user(uuid: VerificationInDB, db: Session):
     verify = auth_verify.get(db, uuid.link)
     if verify:
         user = crud.user.get(db, verify.user_id)
-        crud.user.update(db, obj_in=user, obj_in=schemas.UserUpdate(**{"is_active": "True"}))
+        crud.user.update(db, db_obj=user, obj_in=schemas.UserUpdate(**{"is_active": "True"}))
         return True
     else:
         return False
@@ -73,16 +73,16 @@ def verify_registration_user(uuid: VerificationInDB, db: Session):
 def generate_password_reset_token(email):
     delta = timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
     now = datetime.utcnow()
-    expire = now + delta
+    expires = now + delta
     exp = expires.timestamp()
     encoded_jwt = jwt.encode(
         {"exp": exp, "nbf": now, "sub": password_reset_jwt_subject, "email": email},
-        settings.SECRET_KEY
+        settings.SECRET_KEY,
         algorithm="HS256",
     )
     return encoded_jwt
 
-def virify_password_reset_token(token) -> Optional[str]:
+def verify_password_reset_token(token) -> Optional[str]:
     try:
         decoded_token = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         assert decoded_token["sub"] == password_reset_jwt_subject
