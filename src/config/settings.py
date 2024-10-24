@@ -1,6 +1,10 @@
 import os
 from .local_config import *
 
+from envparse import Env
+
+env = Env()
+
 PROJECT_NAME = "Sportify"
 SERVER_HOST = "http://127.0.0.1:8000"
 
@@ -24,9 +28,14 @@ BACKEND_CORS_ORIGINS = [
 ]
 
 # DB
-SQLALCHEMY_DATABASE_URI =(
-    f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
-)
+# SQLALCHEMY_DATABASE_URI =(
+#     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
+# )
+SQLALCHEMY_DATABASE_URI = env.str(
+    "REAL_DATABASE_URL",
+    default="postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/postgres"
+) # connect string for the database
+APP_PORT = env.int("APP_PORT", default=8000)
 
 USERS_OPEN_REGISTRATION = True
 
