@@ -3,7 +3,7 @@ from fastapi import FastAPI, Response, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from src.config import settings
-#from src.app import routers
+from src.app import routers
 from src.db.session import SessionLocal
 
 
@@ -30,3 +30,5 @@ async def db_session_middleware(request: Request, call_next):
     finally:
         request.state.db.close()
     return response
+
+app.include_router(routers.api_router, prefix=settings.API_V1_STR)
