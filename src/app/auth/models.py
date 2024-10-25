@@ -10,4 +10,4 @@ class Verification(Base):
 
     id = Column(Integer, primary_key=True, index=True, unique=True)
     link = Column(UUID(as_uuid=True), default=uuid4)
-    user_id = Column(Integer, ForeignKey("user.id"))
+    user_id = Column(Integer, ForeignKey("user_user.id"))
