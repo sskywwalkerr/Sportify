@@ -20,5 +20,5 @@ __pycache__/
 .pyc
 *.pyc
 
-!src/db/migrations/.gitkeep
-src/db/migrations/*
+!migrations/.gitkeep
+migrations/*
