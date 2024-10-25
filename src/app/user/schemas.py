@@ -13,7 +13,7 @@ class UserBaseInDB(UserBase):
     is_superuser: Optional[bool] = False
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class UserCreate(UserBaseInDB):
     """ Свойства для получения через API при создании из админки
@@ -34,7 +34,7 @@ class UserCreateInRegistration(BaseModel):
     avatar: str = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
 class UserUpdate(UserBaseInDB):
@@ -60,4 +60,4 @@ class UserPublic(UserBase):
     id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
