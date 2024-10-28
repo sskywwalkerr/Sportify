@@ -31,7 +31,6 @@ class UserCreateInRegistration(BaseModel):
     email: str
     password: str
     first_name: str
-    avatar: str = None
 
     class Config:
         from_attributes = True
