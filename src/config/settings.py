@@ -6,7 +6,7 @@ from envparse import Env
 env = Env()
 
 PROJECT_NAME = "Sportify"
-SERVER_HOST = "http://127.0.0.1:8000"
+SERVER_HOST = 'http://127.0.0.1:8000'
 
 
 # Secret key
@@ -27,24 +27,25 @@ BACKEND_CORS_ORIGINS = [
     "http://localhost:8000",
 ]
 
-# DB
-# SQLALCHEMY_DATABASE_URI =(
-#     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
-# )
-SQLALCHEMY_DATABASE_URI = env.str(
-    "REAL_DATABASE_URL",
-    default="postgresql+asyncpg://postgres:postgres@127.0.0.1:5432/postgres"
+SQLALCHEMY_DATABASE_URI = (
+    "postgresql://postgres:postgres@127.0.0.1:5432/postgres"
 ) # connect string for the database
-APP_PORT = env.int("APP_PORT", default=8000)
-
+#APP_PORT = default = 8000
+# SQLALCHEMY_DATABASE_URI = env.str(
+#     "REAL_DATABASE_URL",
+#     default="postgresql://postgres:postgres@127.0.0.1:5432/postgres"
+# )
 USERS_OPEN_REGISTRATION = True
 
 EMAILS_FROM_NAME = PROJECT_NAME
 EMAIL_RESET_TOKEN_EXPIRE_HOURS = 48
 EMAIL_TEMPLATES_DIR = "src/email-templates/build"
-EMAIL_ENABLED = SMTP_HOST and SMTP_PORT and EMAILS_FROM_EMAIL
-EMAIl_TEST_USER = "sky@gmail.com"
-
+EMAILS_ENABLED = SMTP_HOST and SMTP_PORT and EMAILS_FROM_EMAIL
+EMAIl_TEST_USER = "test@gmail.com"
+# DB
+# SQLALCHEMY_DATABASE_URI =(
+#     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
+# )
 # SUPERUSER_NAME = "Sky"
 # SUPERUSER_EMAIL = "Sky@mail.ru"
 # SUPERUSER_PASSWORD = "272371rad"
