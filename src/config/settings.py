@@ -16,8 +16,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 API_V1_STR = "/api/v1"
 
-# Token = 8 days
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 8
+# Token
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24 * 7
 
 # Cors
 BACKEND_CORS_ORIGINS = [
@@ -30,7 +30,7 @@ BACKEND_CORS_ORIGINS = [
 SQLALCHEMY_DATABASE_URI = (
     "postgresql://postgres:postgres@127.0.0.1:5432/postgres"
 ) # connect string for the database
-#APP_PORT = default = 8000
+APP_PORT = default = 8000
 # SQLALCHEMY_DATABASE_URI = env.str(
 #     "REAL_DATABASE_URL",
 #     default="postgresql://postgres:postgres@127.0.0.1:5432/postgres"
@@ -41,7 +41,7 @@ EMAILS_FROM_NAME = PROJECT_NAME
 EMAIL_RESET_TOKEN_EXPIRE_HOURS = 48
 EMAIL_TEMPLATES_DIR = "src/email-templates/build"
 EMAILS_ENABLED = SMTP_HOST and SMTP_PORT and EMAILS_FROM_EMAIL
-EMAIl_TEST_USER = "test@gmail.com"
+EMAIl_TEST_USER = "rysaev.ryss@gmail.com"
 # DB
 # SQLALCHEMY_DATABASE_URI =(
 #     f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{POSTGRES_SERVER}/{POSTGRES_DB}"
