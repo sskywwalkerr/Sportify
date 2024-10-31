@@ -11,12 +11,13 @@ from src.config import settings
 from src.app.base.utils.db import get_db
 
 from src.app.user.models import User
-from src.app.user import schemas
 from src.app.user import crud
+from src.app.user import schemas
+
 
 from .jwt import ALGORITHM
 from .schemas import TokenPayload, VerificationInDB
-from .service import auth_verify
+from .crud import auth_verify
 from .send_email import send_new_account_email
 
 
@@ -66,6 +67,7 @@ def verify_registration_user(uuid: VerificationInDB, db: Session):
     if verify:
         user = crud.user.get(db, verify.user_id)
         crud.user.update(db, db_obj=user, obj_in=schemas.UserUpdate(**{"is_active": "True"}))
+        auth_verify.remove(db, uuid.link)
         return True
     else:
         return False
