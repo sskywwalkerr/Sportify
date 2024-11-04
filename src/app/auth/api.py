@@ -1,4 +1,5 @@
 from datetime import timedelta
+
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -11,11 +12,11 @@ from src.app.user import schemas
 from src.app.user import crud
 
 from .schemas import Token, Msg, VerificationInDB
-from .logic import get_current_user
+from .permissions import get_current_user
 from .jwt import create_access_token
 from .security import get_password_hash
 from .send_email import send_reset_password_email
-from .logic import (
+from .service import (
     generate_password_reset_token,
     verify_password_reset_token,
     registration_user,
