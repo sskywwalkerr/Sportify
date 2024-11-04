@@ -1,6 +1,5 @@
 import jwt
 from jwt import PyJWTError
-
 from fastapi import Depends, HTTPException, Security
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
