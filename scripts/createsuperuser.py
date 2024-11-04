@@ -5,7 +5,7 @@ from src.app.user.schemas import UserCreate
 
 def main():
     """Создание супер юзера"""
-    super_user = user.get_by_username(db_session, username=confing.SUPERUSER_NAME)
+    super_user = user.get_by_username(db_session, username=settings.SUPERUSER_NAME)
     if not super_user:
         user_in = UserCreate(
             username=settings.SUPERUSER_NAME,

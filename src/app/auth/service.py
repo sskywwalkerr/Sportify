@@ -5,16 +5,16 @@ from typing import Optional
 
 from sqlalchemy.orm import Session
 
-from .crud import auth_verify
-from .send_email import send_new_account_email
+from src.config import settings
 
 from src.app.user import schemas
 from src.app.user import crud
-
-from src.config import settings
-from .schemas import TokenPayload, VerificationInDB
+from .crud import auth_verify
+from .send_email import send_new_account_email
+from .schemas import VerificationInDB
 
 password_reset_jwt_subject = "preset"
+
 
 def registration_user(new_user: schemas.UserCreateInRegistration, db: Session):
     """Register a new user"""
@@ -25,6 +25,7 @@ def registration_user(new_user: schemas.UserCreateInRegistration, db: Session):
         verify = auth_verify.create(db, user.id)
         send_new_account_email(new_user.email, new_user.username, new_user.password, verify.link)
         return False
+
 
 def verify_registration_user(uuid: VerificationInDB, db: Session):
     """confirmation of the user's email"""
@@ -37,6 +38,7 @@ def verify_registration_user(uuid: VerificationInDB, db: Session):
     else:
         return False
 
+
 def generate_password_reset_token(email):
     delta = timedelta(hours=settings.EMAIL_RESET_TOKEN_EXPIRE_HOURS)
     now = datetime.utcnow()
@@ -48,6 +50,7 @@ def generate_password_reset_token(email):
         algorithm="HS256",
     )
     return encoded_jwt
+
 
 def verify_password_reset_token(token) -> Optional[str]:
     try:

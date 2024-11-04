@@ -3,6 +3,7 @@ from src.db.session import Base
 
 class User(Base):
     __tablename__ = 'user_user'
+
     id = Column(Integer, primary_key=True, index=True, unique=True)
     username = Column(String, unique=True)
     email = Column(String, unique=True)
