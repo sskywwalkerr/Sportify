@@ -7,17 +7,18 @@ from .models import User
 from .schemas import UserCreate, UserUpdate
 
 
-
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     """CRUD for users"""
     def get_by_email(self, db_session: Session, *, email: str) -> Optional[User]:
-        return db_session.query(User).filter(User.email == email).first()
+        return db_session.query(self.model).filter(self.model.email == email).first()
+
     def get_by_username(self, db_session: Session, *, username: str) -> Optional[User]:
-        return db_session.query(User).filter(User.username == username).first()
+        return db_session.query(self.model).filter(self.model.username == username).first()
+
     def get_by_username_email(
             self, db_session: Session, *, username: str, email: str
     ) -> Optional[User]:
-        return db_session.query(User).filter(User.username == username, User.email == email).first()
+        return self.exists(db_session, username=username, email=email)
 
     def create(self, db_session: Session, *, obj_in: UserCreate) -> User:
         db_obj = User(
@@ -30,6 +31,7 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         db_session.commit()
         db_session.refresh(db_obj)
         return db_obj
+
     def authenticate(
             self, db_session: Session, *, username: str, password: str
     ) -> Optional[User]:
@@ -38,12 +40,13 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
             return None
         if not verify_password(password, user.password):
             return None
-        return User
+        return user
 
     def is_active(self, user: User) -> bool:
         return user.is_active
+
     def is_superuser(self, user: User) -> bool:
         return user.is_superuser
 
-user = CRUDUser(User)
 
+user = CRUDUser(User)
