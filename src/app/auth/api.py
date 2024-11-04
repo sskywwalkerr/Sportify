@@ -1,5 +1,8 @@
 from datetime import timedelta
 
+from authlib.integrations.starlette_client import OAuth
+from starlette.middleware.sessions import SessionMiddleware
+
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -25,6 +28,21 @@ from .service import (
 
 
 auth_router = APIRouter()
+
+oauth = OAuth()
+
+
+oauth.register(
+    name='github',
+    client_id='ID',
+    client_secret='SECRET',
+    access_token_url='https://github.com/login/oauth/access_token',
+    access_token_params = None,
+    authorize_url='https://github.com/login/oauth/authorize',
+    authorize_params = None,
+    api_base_url = 'https://api.github.com/',
+    client_kwargs = {'scope': 'user:email'},
+)
 
 @auth_router.post("/login/access-token", response_model=Token)
 def login_access_token(
@@ -61,10 +79,10 @@ def confirm_email(uuid: VerificationInDB, db: Session = Depends(get_db)):
     else:
         raise HTTPException(status_code=404, detail="Not found")
 
-@auth_router.post("/login/test-token", response_model=schemas.User)
-def test_token(current_user: models.User = Depends(get_current_user)):
-    """Test access token"""
-    return current_user
+# @auth_router.post("/login/test-token", response_model=schemas.User)
+# def test_token(current_user: models.User = Depends(get_current_user)):
+#     """Test access token"""
+#     return current_user
 
 @auth_router.post("/password-recovery/{email}", response_model=Msg)
 def recover_password(email: str, db: Session = Depends(get_db)):
@@ -102,6 +120,23 @@ def reset_password(token: str = Body(...), new_password: str = Body(...), db: Se
     db.commit()
     return {"msg": "Password updated successfully"}
 
+
+@auth_router.route('/')
+async def login(request):
+    github = oauth.create_client('github')
+    redirect_uri = 'http://localhost:8000/github_login'
+    return await github.authorize_redirect(request, redirect_uri)
+
+
+@auth_router.post('/github_login')
+async def authorize(request):
+    token = await oauth.github.authorize_access_token(request)
+    resp = await oauth.github.get('user', token=token)
+    profile = resp.json()
+    print('*'*10)
+    print(profile)
+    print('*'*10)
+    return [profile]
 
 
 
