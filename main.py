@@ -8,8 +8,8 @@ from src.db.session import SessionLocal
 
 
 app = FastAPI(
-    title=" Fast",
-    description="Author - Sky",
+    title="Fast",
+    description="Author-Sky",
     version="0.1.0",
 )
 
