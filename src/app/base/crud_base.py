@@ -14,12 +14,21 @@ UpdateSchemaType = TypeVar('UpdateSchemaType', bound=BaseModel)
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def __init__(self, model: Type[ModelType]):
         self.model = model
+
+    def exists(self, db_session: Session, **kwargs):
+        return db_session.query(
+            db_session.query(self.model.id).filter_by(**kwargs).exists()
+        ).scalar()
+
     def get_object_or_404(self, db_session: Session, id: int) -> Optional[ModelType]:
         pass
-    def get(self,  db_session: Session, id: int) -> Optional[ModelType]:
-        return  db_session.query(self.model).filter(self.model.id == id).first()
+
+    def get(self, db_session: Session, id: int) -> Optional[ModelType]:
+        return db_session.query(self.model).filter(self.model.id == id).first()
+
     def get_multi(self, db_session: Session, *, skip=0, limit=100) -> List[ModelType]:
         return db_session.query(self.model).offset(skip).limit(limit).all()
+
     def create(self, db_session: Session, *, obj_in: CreateSchemaType, **kwargs) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self.model(**obj_in_data)
@@ -27,20 +36,17 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db_session.commit()
         db_session.refresh(db_obj)
         return db_obj
-    def update(
-        self, db_session: Session, *, db_obj: ModelType, obj_in: UpdateSchemaType
-    ) -> ModelType:
-        obj_data = jsonable_encoder(db_obj)
-        update_data = obj_in.dict(skip_defaults=True)
-        for field in obj_data:
-            if field in update_data:
-                setattr(db_obj, field, update_data[field])
+
+    def update(self, db_session: Session, *, db_obj: ModelType, obj_in: UpdateSchemaType) -> ModelType:
+        update_data = obj_in.dict(exclude_unset=True)
+        for field in update_data:
+            setattr(db_obj, field, update_data[field])
         db_session.add(db_obj)
         db_session.commit()
         db_session.refresh(db_obj)
         return db_obj
 
-    def remove(self, db_session: Session, *, id: int) -> ModelType:
+    def remove(self, db_session: Session, *, id: int) -> None:
         obj = db_session.query(self.model).get(id)
         db_session.delete(obj)
         db_session.commit()
