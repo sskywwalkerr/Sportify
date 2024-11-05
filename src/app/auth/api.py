@@ -1,13 +1,12 @@
 from datetime import timedelta
 
-from authlib.integrations.starlette_client import OAuth
-from starlette.middleware.sessions import SessionMiddleware
-
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
+from starlette.responses import JSONResponse
 
 from src.config import settings
+from src.config.social_app import social_auth
 from src.app.base.utils.db import get_db
 
 from src.app.user import models
@@ -26,23 +25,8 @@ from .service import (
     verify_registration_user
 )
 
-
 auth_router = APIRouter()
 
-oauth = OAuth()
-
-
-oauth.register(
-    name='github',
-    client_id='ID',
-    client_secret='SECRET',
-    access_token_url='https://github.com/login/oauth/access_token',
-    access_token_params = None,
-    authorize_url='https://github.com/login/oauth/authorize',
-    authorize_params = None,
-    api_base_url = 'https://api.github.com/',
-    client_kwargs = {'scope': 'user:email'},
-)
 
 @auth_router.post("/login/access-token", response_model=Token)
 def login_access_token(
@@ -123,20 +107,20 @@ def reset_password(token: str = Body(...), new_password: str = Body(...), db: Se
 
 @auth_router.route('/')
 async def login(request):
-    github = oauth.create_client('github')
-    redirect_uri = 'http://localhost:8000/github_login'
+    github = social_auth.create_client('github')
+    redirect_uri = 'http://localhost:8000/api/v1/github_login'
     return await github.authorize_redirect(request, redirect_uri)
 
 
-@auth_router.post('/github_login')
+@auth_router.route('/github_login')
 async def authorize(request):
-    token = await oauth.github.authorize_access_token(request)
-    resp = await oauth.github.get('user', token=token)
+    token = await social_auth.github.authorize_access_token(request)
+    resp = await social_auth.github.get('user', token=token)
     profile = resp.json()
     print('*'*10)
     print(profile)
-    print('*'*10)
-    return [profile]
+    print('*' * 10)
+    return JSONResponse(profile)
 
 
 
