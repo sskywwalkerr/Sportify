@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class UserBase(BaseModel):
     first_name: Optional[str] = None
 
+
 class UserBaseInDB(UserBase):
     id: int = None
     username: Optional[str] = None
@@ -14,6 +15,7 @@ class UserBaseInDB(UserBase):
 
     class Config:
         from_attributes = True
+
 
 class UserCreate(UserBaseInDB):
     """ Свойства для получения через API при создании из админки
@@ -52,6 +54,7 @@ class UserInDB(UserBaseInDB):
     """ Additional properties stored in DB
     """
     password: str
+
 
 class UserPublic(UserBase):
     """ For public profile user

@@ -1,9 +1,9 @@
 from sqlalchemy import Column, String, DateTime, Boolean, sql
 
-from src.app.base.model_base import BaseModel
+from src.db.session import Base
 
 
-class User(BaseModel):
+class User(Base):
     __tablename__ = 'user_user'
 
     username = Column(String, unique=True)
