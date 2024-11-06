@@ -16,6 +16,7 @@ def send_test_email(email_to: str):
         environment={"project_name": settings.PROJECT_NAME, "email": email_to}
     )
 
+
 def send_reset_password_email(email_to: str, email: str, token: str):
     """sending an email when the password is reset"""
     project_name = settings.PROJECT_NAME
@@ -40,6 +41,7 @@ def send_reset_password_email(email_to: str, email: str, token: str):
             "link": link,
         },
     )
+
 
 def send_new_account_email(email_to: str, username: str, password: str, uuid:str):
     """sending an email when the created user"""
