@@ -1,5 +1,6 @@
 from typing import Optional
 from pydantic import BaseModel
+from requests.auth import AuthBase
 
 
 class UserBase(BaseModel):
@@ -56,10 +57,24 @@ class UserInDB(UserBaseInDB):
     password: str
 
 
+class SocialAccount(BaseModel):
+    """Schema social account"""
+    account_id: int
+    account_url: str
+    account_login: str
+    account_name: str
+    provider: str
+
+    class Config:
+        from_attributes = True
+
+
+
 class UserPublic(UserBase):
     """ For public profile user
     """
     id: int
+    social_account: SocialAccount = None
 
     class Config:
         from_attributes = True
