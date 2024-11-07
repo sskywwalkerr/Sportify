@@ -35,6 +35,14 @@ APP_PORT = default = 8000
 #     "REAL_DATABASE_URL",
 #     default="postgresql://postgres:postgres@127.0.0.1:5432/postgres"
 # )
+
+# SQLALCHEMY_DATABASE_URI = (
+#     f'postgresql://{os.environ["POSTGRES_USER"]}:'
+#     f'{os.environ["POSTGRES_PASSWORD"]}@'
+#     f'{os.environ["POSTGRES_HOST"]}/'
+#     f'{os.environ["POSTGRES_DB"]}'
+# )
+
 USERS_OPEN_REGISTRATION = True
 
 EMAILS_FROM_NAME = PROJECT_NAME
