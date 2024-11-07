@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 from src.app.auth.security import verify_password, get_password_hash
 from src.app.base.crud_base import CRUDBase
 
-from .models import User
-from .schemas import UserCreate, UserUpdate
+from .models import User, SocialAccount
+from . import schemas
 
 
-class UserCRUD(CRUDBase[User, UserCreate, UserUpdate]):
+class UserCRUD(CRUDBase[User, schemas.UserCreate, schemas.UserUpdate]):
     """CRUD for users"""
     def get_by_email(self, db: Session, *, email: str) -> Optional[User]:
         return db.query(self.model).filter(self.model.email == email).first()
@@ -20,7 +20,7 @@ class UserCRUD(CRUDBase[User, UserCreate, UserUpdate]):
     ) -> Optional[User]:
         return self.exists(db, username=username, email=email)
 
-    def create(self, db: Session, *args, schema: UserCreate) -> User:
+    def create(self, db: Session, *args, schema: schemas.UserCreate) -> User:
         db_obj = User(
             username=schema.username,
             email=schema.email,
@@ -32,8 +32,22 @@ class UserCRUD(CRUDBase[User, UserCreate, UserUpdate]):
         db.refresh(db_obj)
         return db_obj
 
+    def create_superuser(self, db_session: Session, *args, schema: schemas.UserCreate) -> User:
+        db_obj = User(
+            username=schema.username,
+            email=schema.email,
+            password=get_password_hash(schema.password),
+            first_name=schema.first_name,
+            is_superuser=schema.is_superuser,
+            is_active=schema.is_active,
+        )
+        db_session.add(db_obj)
+        db_session.commit()
+        db_session.refresh(db_obj)
+        return db_obj
+
     def authenticate(
-            self, db: Session, *, username: str, password: str
+        self, db: Session, *, username: str, password: str
     ) -> Optional[User]:
         user = self.get_by_username(db, username=username)
         if not user:
@@ -54,4 +68,10 @@ class UserCRUD(CRUDBase[User, UserCreate, UserUpdate]):
         db.commit()
 
 
+class SocialAccountCRUD(CRUDBase[SocialAccount, schemas.SocialAccount, schemas.SocialAccount]):
+    """CRUD for SocialAccount"""
+    pass
+
+
 user = UserCRUD(User)
+SocialAccount = UserCRUD(SocialAccount)
