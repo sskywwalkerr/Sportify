@@ -108,7 +108,7 @@ async def login(request: Request):
 
 
 @auth_router.get('/github_login')
-async def authorize(request: Request):
+async def authorize(request: Request, db: Session = Depends(get_db)):
     token = await social_auth.github.authorize_access_token(request)
     resp = await social_auth.github.get('user', token=token)
     profile = resp.json()
@@ -117,10 +117,17 @@ async def authorize(request: Request):
         account_url=profile.get("html_url"),
         account_login=profile.get("login"),
         account_name=profile.get("name"),
+        avatar_url=profile.get("avatar_url"),
         provider="github"
     )
-    service.create_social_account(prof)
-    return JSONResponse(profile)
+    user = service.create_social_account(db, prof)
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    return {
+        "access_token": create_access_token(
+            data={"user_id": user.id}, expires_delta=access_token_expires
+        ),
+        "token_type": "bearer"
+    }
 
 
 

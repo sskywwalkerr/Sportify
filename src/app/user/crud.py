@@ -21,11 +21,10 @@ class UserCRUD(CRUDBase[User, schemas.UserCreate, schemas.UserUpdate]):
         return self.exists(db, username=username, email=email)
 
     def create(self, db: Session, *args, schema: schemas.UserCreate) -> User:
+        password = schema.dict().pop("password")
         db_obj = User(
-            username=schema.username,
-            email=schema.email,
-            password=get_password_hash(schema.password),
-            first_name=schema.first_name,
+            **schema.dict(exclude={"password"}),
+            password=get_password_hash(password),
         )
         db.add(db_obj)
         db.commit()
@@ -74,4 +73,4 @@ class SocialAccountCRUD(CRUDBase[SocialAccount, schemas.SocialAccount, schemas.S
 
 
 user = UserCRUD(User)
-SocialAccount = UserCRUD(SocialAccount)
+social_account = SocialAccountCRUD(SocialAccount)
