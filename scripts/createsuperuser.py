@@ -25,9 +25,12 @@ def main():
             is_superuser=True,
             is_active=True,
         )
-        user.create(db_session, obj_in=user_in)
+        user.create(db_session, schema=user_in)
         mess = typer.style("Success", fg=typer.colors.GREEN)
     else:
         mess = typer.style("Error, user existing", fg=typer.colors.RED)
     typer.echo(mess)
 
+
+if __name__ == "__main__":
+    typer.run(main)
