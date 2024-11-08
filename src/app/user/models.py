@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, DateTime, Boolean, sql, Integer, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 
 from src.db.session import Base
 
@@ -31,6 +31,6 @@ class SocialAccount(Base):
     provider = Column(String)
 
     user_id = Column(Integer, ForeignKey('user_user.id', ondelete='CASCADE'))
-    user = relationship("User", backref='social_accounts')
+    user = relationship("User", backref=backref('social_account'))
 
 
