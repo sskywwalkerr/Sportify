@@ -1,6 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
-from requests.auth import AuthBase
+from pydantic import BaseModel, EmailStr
 
 
 class UserBase(BaseModel):
@@ -22,16 +21,17 @@ class UserCreate(UserBaseInDB):
     """ Свойства для получения через API при создании из админки
     """
     username: str
-    email: str
+    email: EmailStr
     password: str
     first_name: str
+    avatar: str = None
 
 
 class UserCreateInRegistration(BaseModel):
     """ Свойства для получения через API при регистрации
     """
     username: str
-    email: str
+    email: EmailStr
     password: str
     first_name: str
 
@@ -63,18 +63,18 @@ class SocialAccount(BaseModel):
     account_url: str
     account_login: str
     account_name: str
+    avatar_url: str
     provider: str
 
     class Config:
         from_attributes = True
 
 
-
 class UserPublic(UserBase):
     """ For public profile user
     """
     id: int
-    social_account: SocialAccount = None
+    # social_account: SocialAccount
 
     class Config:
         from_attributes = True
