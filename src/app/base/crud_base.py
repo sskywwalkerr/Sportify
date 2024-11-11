@@ -43,12 +43,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     def update(
             self, db: Session, *args, model: ModelType, schema: UpdateSchemaType
     ) -> ModelType:
-        obj_data = jsonable_encoder(model)
-        update_data = schema.dict(skip_defaults=True)
-        # update_data = schema.dict(exclude_unset=True)
-        for field in obj_data:
-            if field in update_data:
-                setattr(model, field, update_data[field])
+        update_data = schema.dict(exclude_unset=True)
+        for field in update_data:
+            setattr(model, field, update_data[field])
         db.add(model)
         db.commit()
         db.refresh(model)
