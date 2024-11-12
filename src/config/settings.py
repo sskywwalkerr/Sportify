@@ -29,7 +29,7 @@ BACKEND_CORS_ORIGINS = [
 
 SQLALCHEMY_DATABASE_URI = (
     "postgresql://postgres:postgres@127.0.0.1:5432/postgres"
-) # connect string for the database
+)# connect string for the database
 APP_PORT = default = 8000
 # SQLALCHEMY_DATABASE_URI = env.str(
 #     "REAL_DATABASE_URL",

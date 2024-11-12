@@ -23,6 +23,7 @@ app.add_middleware(
 )
 app.add_middleware(SessionMiddleware, secret_key=settings.SECRET_KEY)
 
+
 @app.middleware("http")
 async def db_session_middleware(request: Request, call_next):
     responce = Response("Internal Server Error", status_code=500)
@@ -34,3 +35,12 @@ async def db_session_middleware(request: Request, call_next):
     return response
 
 app.include_router(routers.api_router, prefix=settings.API_V1_STR)
+
+
+# register_tortoise(
+#     app,
+#     db_url="postgresql://postgres:postgres@127.0.0.1:5432/postgres",
+#     modules={"models": ["src.models", "aerich.models"]},
+#     generate_schemas=True,
+#     add_exception_handlers=True,
+# )
